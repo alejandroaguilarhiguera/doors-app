@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import { db } from '@/config/firebase/config';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { doc, onSnapshot } from 'firebase/firestore';
 import Spinner from '@/components/Spinner';
-import { openDoor, closeDoor, Zone} from '@/config/firebase/firestore';
 import { Text, View } from '@/components/Themed';
 import Svg, { Rect, Polygon, Line, Circle } from 'react-native-svg';
 
@@ -48,50 +46,20 @@ const GateClose = () => {
   <Circle cx="106" cy="75" r="3" fill="#FFD700" />
 </Svg>)
 }
-
+interface Zone {
+  id: string;
+}
 export default function TabOneScreen() {
 
   const [doorData, setDoorData] = useState<Zone | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const collectionId = process.env.EXPO_PUBLIC_COLLECTION_ID ?? '';
-    const documentId = process.env.EXPO_PUBLIC_DOCUMENT_ID ?? '';
 
-    if (!collectionId || !documentId) {
-      setError("Error: database configuration or collection.");
-      setLoading(false);
-      return;
-    }
-    
-    const doorDocRef = doc(db, collectionId, documentId);
+  if (!doorData) return <View style={styles.container}>
+      <Text style={styles.title}>Empty stage</Text>
 
-    const unsubscribe = onSnapshot(
-      doorDocRef, 
-      (docSnap) => {
-        if (docSnap.exists()) {
-          setDoorData(docSnap.data() as Zone);
-        } else {
-          setError(`document ${documentId} not found.`);
-        }
-      }, 
-      (err) => {
-        setError("Error to listen the document.");
-        console.error("Error on onSnapshot: ", err);
-        setLoading(false);
-      }
-    );
-
-    return () => {
-      console.log("Clean event.");
-      unsubscribe();
-    };
-
-  }, []);
-
-
-  if (!doorData) return <View style={styles.container}></View>
+  </View>
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Gate controls</Text>
@@ -104,21 +72,31 @@ export default function TabOneScreen() {
       </View>
 
       <View style={{ display: 'flex', gap: 8 }}>
-        <Button style={styles.button} loading={doorData.status === 'in_progress'}  disabled={doorData.status === 'in_progress' || doorData.status === 'opened'} onPress={() => {
-          openDoor().then((response) => console.log(response)).catch(console.error);
-        }}>
+        <Button
+          style={styles.button}
+          // loading={doorData.status === 'in_progress'}
+          // disabled={doorData.status === 'in_progress' || doorData.status === 'opened'}
+          onPress={() => {
+            // openDoor().then((response) => console.log(response)).catch(console.error);
+          }}
+        >
           Open
         </Button>
 
         
-        <Button style={styles.button} loading={doorData.status === 'in_progress'} disabled={doorData.status === 'in_progress' || doorData.status === 'closed'} onPress={() => {
-          closeDoor().then((response) => console.log(response)).catch(console.error);
-        }}>
+        <Button
+          style={styles.button}
+          // loading={doorData.status === 'in_progress'}
+          // disabled={doorData.status === 'in_progress' || doorData.status === 'closed'}
+          onPress={() => {
+            // closeDoor().then((response) => console.log(response)).catch(console.error);
+          }}
+        >
         Close
       </Button>
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     
-    {doorData.status === 'in_progress' && (
+    {/* {doorData.status === 'in_progress' && (
       <Spinner size={60} color="#e74c3c" />
     )}
     
@@ -127,7 +105,7 @@ export default function TabOneScreen() {
     )}
     {doorData.status === 'closed' && (
     <GateClose />
-    )}
+    )} */}
   </View>
 
 
