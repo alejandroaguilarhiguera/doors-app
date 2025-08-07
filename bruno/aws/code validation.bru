@@ -1,0 +1,19 @@
+meta {
+  name: code validation
+  type: http
+  seq: 2
+}
+
+get {
+  url: https://bwccm0m3zf.execute-api.us-east-1.amazonaws.com/default/validation_code?code=675b55fb-2a1b-4290-8bcd-49e544b1f8f1
+  body: none
+  auth: inherit
+}
+
+params:query {
+  code: 675b55fb-2a1b-4290-8bcd-49e544b1f8f1
+}
+
+settings {
+  encodeUrl: true
+}
