@@ -85,6 +85,16 @@ export default function TabTwoScreen() {
           });
           console.error(err);
         })
+      } else {
+        if (payload.status === 500) {
+          setIsLoadingQR(false);
+          Toast.show({
+            type: 'error', // 'success', 'error', 'info'
+            text1: 'Error en el servidor',
+            position: 'top', // 'top', 'bottom'
+            visibilityTime: 6000, // Duración en ms
+          });
+        }
       }
     }).catch((err) => {
       setIsLoadingQR(false);
