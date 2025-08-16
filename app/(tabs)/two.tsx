@@ -10,7 +10,7 @@ import { Text, View } from '@/components/Themed';
 import useThingStore from '@/store/thingStore';
 
 export interface Code {
-  uuid: string;
+  id: string;
   count: number;
   createdAt: string;
   updatedAt: string;
@@ -70,11 +70,14 @@ export default function TabTwoScreen() {
         thingName,
       })
     });
+    console.log('test 11');
     response.then((payload) => {
+      console.log('test 22');
       if (payload.ok) {
+        console.log('test 33');
         payload.json().then((dataGenerateCode: PayloadGenerateCode) => {
           setIsLoadingQR(false);
-          setCode(dataGenerateCode.code.uuid)
+          setCode(dataGenerateCode.code.id)
         }).catch((err) => {
           setIsLoadingQR(false);
           Toast.show({
@@ -83,9 +86,16 @@ export default function TabTwoScreen() {
             position: 'top', // 'top', 'bottom'
             visibilityTime: 6000, // Duración en ms
           });
+          Toast.show({
+            type: 'error', // 'success', 'error', 'info'
+            text1: err,
+            position: 'top', // 'top', 'bottom'
+            visibilityTime: 6000, // Duración en ms
+          });
           console.error(err);
         })
       } else {
+        console.log('error', payload)
         if (payload.status === 500) {
           setIsLoadingQR(false);
           Toast.show({
