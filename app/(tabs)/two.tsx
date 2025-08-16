@@ -70,11 +70,8 @@ export default function TabTwoScreen() {
         thingName,
       })
     });
-    console.log('test 11');
     response.then((payload) => {
-      console.log('test 22');
       if (payload.ok) {
-        console.log('test 33');
         payload.json().then((dataGenerateCode: PayloadGenerateCode) => {
           setIsLoadingQR(false);
           setCode(dataGenerateCode.code.id)
