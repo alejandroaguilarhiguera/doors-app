@@ -20,11 +20,9 @@ const ListDevicesScreen = () => {
         }
     }); 
     
-
-
     return (
         <View style={styles.content}>
-            {data?.map((thing) => (
+             {data?.map((thing) => (
                 <ThingItem thing={thing} key={thing.thingName} />
             ))}
         </View>
