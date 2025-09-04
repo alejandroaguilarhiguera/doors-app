@@ -1,13 +1,19 @@
+import {useEffect} from 'react';
 import Toast from 'react-native-toast-message';
 import { StyleSheet } from 'react-native';
 import { router } from 'expo-router';
-import PowerButton from '@/components/PowerButton';
-import { View, Text } from '@/components/Themed';
+import PowerButton from '@/src/components/PowerButton';
+import { View, Text } from '@/src/components/Themed';
 import useThingStore from '@/store/thingStore';
 
 export default function TabOneScreen() {
   const  { thingName, attributes } = useThingStore((state: any) => state.selectedThing) ??{}
-  if (!thingName) router.replace('/ListDevices');
+  
+  useEffect(() => {
+    if (!thingName) {
+      router.replace('/ListDevices');
+    }
+  }, [thingName]);
 
   return (
     <View style={styles.container}>

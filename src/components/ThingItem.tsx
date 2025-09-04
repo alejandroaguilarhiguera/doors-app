@@ -2,7 +2,7 @@ import React from 'react';
 import { router } from 'expo-router';
 import { StyleSheet, Pressable } from 'react-native';
 import { Text } from './Themed';
-import { Thing } from '@/app/ListDevices';
+import { Thing } from '@/src/types/aws';
 import useThingStore from '@/store/thingStore';
 
 interface ThingItemProps {
@@ -11,7 +11,6 @@ interface ThingItemProps {
 
 const ThingItem = ({thing}: ThingItemProps) => {
     const selectThing = useThingStore((state: any) => state.selectThing)
-
     const handlePress = () => {
         selectThing(thing);
         router.push('/(tabs)');
@@ -19,12 +18,11 @@ const ThingItem = ({thing}: ThingItemProps) => {
 
     return (
         <Pressable
-        style={styles.content}
+            style={styles.content}
             onPress={handlePress}
         >
-            <Text>
-
-            {thing.thingName} - {thing.attributes.name}
+            <Text style={{ color: '#e7e5e4'}}>
+                {thing.thingName} - {thing.attributes.name}
             </Text>
         </Pressable>
     );

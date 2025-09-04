@@ -1,29 +1,33 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import useSWR from 'swr';
 import { StyleSheet } from 'react-native';
-import { Text, View } from '../components/Themed';
-import ThingItem from '../components/ThingItem';
-
-export interface Thing {
-    thingName: string;
-    thingArn: string;
-    attributes: { [key: string]: string | number };
-    version:number;
-}
-
+import { View } from '@/src/components/Themed';
+import { AuthContext } from '@/src/context/AuthContext';
+import ThingItem from '@/src/components/ThingItem';
+import { fetcher } from '@/src/api/fetcher';
+import { Thing } from '@/src/types/aws';
+import SkeletonBar from '@/src/components/SkeletonBar';
 
 const ListDevicesScreen = () => {
-    const { data } = useSWR<Thing[]>('devices', async() => {
-        const response = await fetch(process.env.EXPO_PUBLIC_LIST_DEVICES ?? '');
-        if (response.ok) {
-            return await response.json();
-        }
-    }); 
-    
+    const { tokens, setTokens } = useContext(AuthContext);
+    const { data, isLoading, error } = useSWR<Thing[]>(
+        process.env.EXPO_PUBLIC_LIST_DEVICES,
+        (url: string) => fetcher(url, {}, tokens, setTokens),
+    ); 
     return (
         <View style={styles.content}>
-             {data?.map((thing) => (
-                <ThingItem thing={thing} key={thing.thingName} />
+            {isLoading && (
+                <>
+                    <SkeletonBar width="100%" height={40} />
+                    <SkeletonBar width="100%" height={40} style={{ marginTop: 8 }} />
+                    <SkeletonBar width="100%" height={40} style={{ marginTop: 8 }} />
+                </>
+            )}
+            {data?.map((thing) => (
+                <ThingItem
+                    thing={thing}
+                    key={thing.thingName}
+                />
             ))}
         </View>
     );

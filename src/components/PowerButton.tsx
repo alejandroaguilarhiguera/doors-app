@@ -1,42 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Toast from 'react-native-toast-message';
 import { StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons'; // Importamos el ícono
+import {fetcher} from '@/src/api/fetcher';
+import { AuthContext } from '@/src/context/AuthContext';
 
 interface PowerButtonProps {
     thingName: string
 }
 
 const PowerButton = ({thingName}: PowerButtonProps) => {
+    const { tokens, setTokens } = useContext(AuthContext);
     // Estado para saber si está encendido o apagado
     const [isOn, setIsOn] = useState(false);
 
     // Función para cambiar el estado
     const handlePress = () => {
         const url = process.env.EXPO_PUBLIC_MANUAL_POWER ?? '';
-        const response = fetch(url, {
+
+        const response = fetcher(url, {
             method: 'POST',
             body: JSON.stringify({
                 thingName,
                 pin: 16,
                 action: isOn ? 'OFF' : 'ON'
-            })
-        });
+            }),
+        }, tokens, setTokens)
 
-        response.then((payload) => {
-            payload.json().then((data) => {
-                console.log(isOn ? 'Apagando...' : 'Encendiendo...');
-                setIsOn(prevState => !prevState);
-
-            }).catch((err) => {
-                console.error(err);
-                Toast.show({
-                    type: 'error', // 'success', 'error', 'info'
-                    text1: String(err),
-                    position: 'top', // 'top', 'bottom'
-                    visibilityTime: 6000, // Duración en ms
-                });
-            })
+        response.then((data) => {
+            console.log(isOn ? 'Apagando...' : 'Encendiendo...', JSON.stringify(data||{}));
+            setIsOn(prevState => !prevState);
         }).catch((err) => {
             console.error(err);
             Toast.show({

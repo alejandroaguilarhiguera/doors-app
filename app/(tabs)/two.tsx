@@ -1,31 +1,24 @@
 
 import { StyleSheet, Alert, ActivityIndicator } from 'react-native';
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import { Button } from 'react-native-paper';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import Toast from 'react-native-toast-message';
-import ImageWithQRCode from '@/components/ImageWithQRCode';
-import { Text, View } from '@/components/Themed';
+import ImageWithQRCode from '@/src/components/ImageWithQRCode';
+import { Text, View } from '@/src/components/Themed';
 import useThingStore from '@/store/thingStore';
+import { fetcher } from '@/src/api/fetcher';
+import { Code, PayloadGenerateCode } from '@/src/types/aws';
+import { AuthContext } from '@/src/context/AuthContext';
 
-export interface Code {
-  id: string;
-  count: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PayloadGenerateCode {
-  message: string;
-  code: Code;
-}
 
 interface QRCodeInstance {
   toDataURL: (callback: (dataURL: string) => void) => void;
 }
 
 export default function TabTwoScreen() {
+  const { tokens, setTokens } = useContext(AuthContext);
   const { thingName, attributes } = useThingStore((state: any) => state.selectedThing)
 
   const [isLoadingQR, setIsLoadingQR] = useState(false);
@@ -64,45 +57,15 @@ export default function TabTwoScreen() {
   const [code, setCode] = useState<string | null>(null);
   const onGenerateCode = () => {
     setIsLoadingQR(true);
-    const response = fetch(process.env.EXPO_PUBLIC_GENERATE_CODE ?? '', {
+    const response = fetcher(process.env.EXPO_PUBLIC_GENERATE_CODE ?? '', {
       method: 'POST',
       body: JSON.stringify({
         thingName,
       })
-    });
-    response.then((payload) => {
-      if (payload.ok) {
-        payload.json().then((dataGenerateCode: PayloadGenerateCode) => {
+    }, tokens, setTokens);
+    response.then((dataGenerateCode: PayloadGenerateCode) => {
           setIsLoadingQR(false);
           setCode(dataGenerateCode.code.id)
-        }).catch((err) => {
-          setIsLoadingQR(false);
-          Toast.show({
-            type: 'error', // 'success', 'error', 'info'
-            text1: String(err),
-            position: 'top', // 'top', 'bottom'
-            visibilityTime: 6000, // Duración en ms
-          });
-          Toast.show({
-            type: 'error', // 'success', 'error', 'info'
-            text1: err,
-            position: 'top', // 'top', 'bottom'
-            visibilityTime: 6000, // Duración en ms
-          });
-          console.error(err);
-        })
-      } else {
-        console.log('error', payload)
-        if (payload.status === 500) {
-          setIsLoadingQR(false);
-          Toast.show({
-            type: 'error', // 'success', 'error', 'info'
-            text1: 'Error en el servidor',
-            position: 'top', // 'top', 'bottom'
-            visibilityTime: 6000, // Duración en ms
-          });
-        }
-      }
     }).catch((err) => {
       setIsLoadingQR(false);
 
