@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import useSWR from 'swr';
 import { StyleSheet } from 'react-native';
-import { View } from '@/src/components/Themed';
+import { View, Text } from '@/src/components/Themed';
 import { AuthContext } from '@/src/context/AuthContext';
 import ThingItem from '@/src/components/ThingItem';
 import { fetcher } from '@/src/api/fetcher';
@@ -16,6 +16,7 @@ const ListDevicesScreen = () => {
     ); 
     return (
         <View style={styles.content}>
+            {error && (<View><Text>{JSON.stringify(error)}</Text></View>)} 
             {isLoading && (
                 <>
                     <SkeletonBar width="100%" height={40} />
@@ -23,6 +24,7 @@ const ListDevicesScreen = () => {
                     <SkeletonBar width="100%" height={40} style={{ marginTop: 8 }} />
                 </>
             )}
+            <Text>{JSON.stringify({ data })}</Text>
             {data?.map((thing) => (
                 <ThingItem
                     thing={thing}

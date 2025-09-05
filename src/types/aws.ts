@@ -15,3 +15,15 @@ export interface PayloadGenerateCode {
   message: string;
   code: Code;
 }
+
+export interface KynesisStream {
+  DeviceName: string;
+  StreamName: string;
+  StreamARN: string;
+  MediaType: string;
+  KmsKeyId: string;
+  Version: string;
+  Status: string;
+  CreationTime: string;
+  DataRetentionInHours: number
+}

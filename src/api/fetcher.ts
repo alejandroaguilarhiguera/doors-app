@@ -59,7 +59,6 @@ export async function fetcher(
   };
 
   let response = await fetch(url, { ...options, headers });
-
   if (response.status === 401) {
     if (currentToken?.refreshToken) {
         try {
